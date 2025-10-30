@@ -1,32 +1,25 @@
-// Import module yang dibutuhkan
-const express = require('express');
-const http = require('http');
-const { Server } = require('socket.io');
-const path = require('path');
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
 
-// Buat app Express dan server HTTP
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-// Set folder public sebagai tempat file frontend (index.html)
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static("public")); // folder untuk file HTML dan JS tampilan
 
-// Jalankan server socket.io
-io.on('connection', (socket) => {
-  console.log('Ada pengguna baru yang terhubung');
+io.on("connection", (socket) => {
+  console.log("Pengguna baru terhubung!");
 
-  socket.on('chat message', (msg) => {
-    io.emit('chat message', msg); // kirim ke semua client
+  socket.on("chat message", (msg) => {
+    io.emit("chat message", msg); // kirim pesan ke semua pengguna
   });
 
-  socket.on('disconnect', () => {
-    console.log('Pengguna terputus');
+  socket.on("disconnect", () => {
+    console.log("Pengguna keluar.");
   });
 });
 
-// Tentukan port server
-const PORT = 3000;
-server.listen(PORT, () => {
-  console.log(`Server berjalan di http://localhost:${PORT}`);
+server.listen(3000, () => {
+  console.log("Server berjalan di http://localhost:3000");
 });
