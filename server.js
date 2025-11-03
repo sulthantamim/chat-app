@@ -1,37 +1,29 @@
-const path = require("path");
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
+const path = require("path");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-  },
-});
+const io = new Server(server);
 
-// Arahkan folder public agar bisa diakses
 app.use(express.static(path.join(__dirname, "public")));
 
-// Root ke index.html
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
-// ===== SOCKET.IO =====
 io.on("connection", (socket) => {
-  console.log("🟢 User connected");
+  console.log("Pengguna baru terhubung");
 
   socket.on("chat message", (msg) => {
     io.emit("chat message", msg);
   });
 
   socket.on("disconnect", () => {
-    console.log("🔴 User disconnected");
+    console.log("Pengguna keluar");
   });
 });
 
-// Jalankan server
+// Gunakan port dari Railway, atau 3000 kalau lokal
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+
+server.listen(PORT, () => {
+  console.log(`Server berjalan di port ${PORT}`);
+});
